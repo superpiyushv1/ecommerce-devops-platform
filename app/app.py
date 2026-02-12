@@ -1,20 +1,17 @@
-from flask import Flask, jsonify
+from flask import Flask
+import redis
+import os
 
 app = Flask(__name__)
 
-APP_VERSION = "1.0.0"
+redis_host = "redis"
+r = redis.Redis(host=redis_host, port=6379, decode_responses=True)
 
-@app.route("/health")
-def health():
-    return jsonify(status="UP")
-
-@app.route("/version")
-def version():
-    return jsonify(version=APP_VERSION)
-
-@app.route("/order", methods=["POST"])
-def create_order():
-    return jsonify(message="Order created successfully")
+@app.route("/")
+def home():
+    count = r.incr("visits")
+    return f"Hello DevOps 🚀 Visits: {count}"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
+
