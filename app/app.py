@@ -1,17 +1,21 @@
-from flask import Flask
-import redis
 import os
+import redis
+from flask import Flask
 
 app = Flask(__name__)
 
-redis_host = "redis"
-r = redis.Redis(host=redis_host, port=6379, decode_responses=True)
+def get_redis():
+    """
+    Redis factory function.
+    Easy to mock in tests.
+    """
+    redis_host = os.getenv("REDIS_HOST", "localhost")
+    redis_port = int(os.getenv("REDIS_PORT", 6379))
+    return redis.Redis(host=redis_host, port=redis_port, decode_responses=True)
 
 @app.route("/")
 def home():
-    count = r.incr("visits")
-    return f"Hello DevOps 🚀 Visits: {count}"
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    r = get_redis()
+    r.incr("hits")
+    return "Hello from Ecommerce DevOps Platform!", 200
 
