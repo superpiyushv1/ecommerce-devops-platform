@@ -19,3 +19,6 @@ def home():
     r.incr("hits")
     return "Hello from Ecommerce DevOps Platform!", 200
 
+@app.route("/health")
+def heallth():
+    return {"status": "ok"}, 200
