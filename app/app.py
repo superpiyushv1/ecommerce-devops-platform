@@ -4,7 +4,7 @@ import redis
 from prometheus_flask_exporter import PrometheusMetrics
 
 app = Flask(__name__)
-
+metrics = PrometheusMetrics(app)
 redis_client = None
 
 redis_url = os.environ.get("REDIS_URL")
