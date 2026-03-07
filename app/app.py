@@ -1,24 +1,28 @@
 import os
-import redis
 from flask import Flask
+import redis
 
 app = Flask(__name__)
 
-def get_redis():
-    """
-    Redis factory function.
-    Easy to mock in tests.
-    """
-    redis_host = os.getenv("REDIS_HOST", "localhost")
-    redis_port = int(os.getenv("REDIS_PORT", 6379))
-    return redis.Redis(host=redis_host, port=redis_port, decode_responses=True)
+try:
+    redis_client = redis.Redis(
+        host=os.environ.get("REDIS_HOST", "localhost"),
+        port=6379,
+        decode_responses=True
+    )
+    redis_client.ping()
+except:
+    redis_client = None
+
 
 @app.route("/")
 def home():
-    r = get_redis()
-    r.incr("hits")
-    return "Hello from Ecommerce DevOps Platform!", 200
+    return "Ecommerce DevOps Platform Running!"
+
 
 @app.route("/health")
-def heallth():
-    return {"status": "ok"}, 200
+def health():
+    if redis_client:
+        return {"status": "healthy", "redis": "connected"}
+    else:
+        return {"status": "healthy", "redis": "not available"}
