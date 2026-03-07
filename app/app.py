@@ -1,6 +1,7 @@
 import os
 from flask import Flask
 import redis
+from prometheus_flask_exporter import PrometheusMetrics
 
 app = Flask(__name__)
 
